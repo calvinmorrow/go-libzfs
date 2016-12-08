@@ -235,6 +235,11 @@ func poolGetConfig(name string, nv *C.nvlist_t) (vdevs VDevTree, err error) {
 		if err != nil {
 			return
 		}
+		// If the child vdev has multiple devices, append an incrementing suffix to its
+		// name to match zpool status output (mirror-0, mirror-1, raidz2-2, etc.)
+		if len(vdev.Devices) > 0 {
+			vdev.Name = fmt.Sprintf("%s-%d", vdev.Name, c)
+		}
 		vdevs.Devices = append(vdevs.Devices, vdev)
 	}
 	return
